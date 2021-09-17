@@ -7,7 +7,7 @@ interface Props {
   painting: PaintingType;
 }
 
-const defaultColors = ['#ffff00', '#ff0000', '#0000ff', '#00ff00'];
+const defaultColors = ['lime', 'yellow', 'blue', 'red'];
 
 const getDefaultColors = (numColors: number) => [
   ...new Array(numColors).fill('').map((_, i) => defaultColors[i % defaultColors.length]),
@@ -17,8 +17,8 @@ export const Painting = ({ painting }: Props) => {
   const [slide, setSlide] = React.useState(0);
 
   const [colors, setColors] = React.useState([...getDefaultColors(painting.numColors)]);
-  const [outline, setOutline] = React.useState('#000000');
-  const [background, setBackground] = React.useState('#ffffff');
+  const [outline, setOutline] = React.useState('black');
+  const [background, setBackground] = React.useState('white');
 
   const image = painting.renderContent(colors, outline, painting.iterations, slide);
 

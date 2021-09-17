@@ -4,6 +4,7 @@ import theme from './theme';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Painting } from './Components/Painting';
 import { frogPainting } from './svgs/frog';
+import { hippoPainting } from './svgs/hipt';
 
 export const App = () => {
   return (
@@ -14,6 +15,9 @@ export const App = () => {
             <Stack>
               <Switch>
                 <Route exact path="/">
+                  <Painting painting={hippoPainting} />
+                </Route>
+                <Route exact path="/f">
                   <Painting painting={frogPainting} />
                 </Route>
                 <Route>
