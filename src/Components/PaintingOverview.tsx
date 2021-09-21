@@ -5,6 +5,8 @@ import { Box, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { colors, defaultColors } from '../colors';
 import { Link as ReachLink } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router';
+
 const generateColorCombinations = (numColors: number) => {
   return [
     ...Array(numColors)
@@ -21,12 +23,32 @@ const generateColors = (numPaintings: number, colorsPerPainting: number) => {
   ];
 };
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 export const PaintingOverview = () => {
   const [selectedPainting, setSelectedPainting] = React.useState<Painting | null>(null);
+  const query = useQuery();
+  const history = useHistory();
+
   const background = 'white';
   const outline = 'black';
 
   const colorsForPaintings = generateColors(99, selectedPainting?.numColors || 5);
+
+  React.useEffect(() => {
+    const queryTemplate = query.get('template');
+    if (queryTemplate) {
+      const matchingPainting = paintings.find(painting => painting.name === queryTemplate);
+      if (matchingPainting) {
+        setSelectedPainting(paintings.find(painting => painting.name === queryTemplate) || null);
+      } else {
+        history.push('/');
+      }
+    }
+  }, [history, query]);
+
   return (
     <Stack>
       {selectedPainting ? (
@@ -50,9 +72,11 @@ export const PaintingOverview = () => {
         <>
           <Heading>Choose a template</Heading>
           {paintings.map((painting, i) => (
-            <Box key={i} onClick={() => setSelectedPainting(painting)}>
-              <PaintingPreview painting={painting} background={background} outline={outline} colors={defaultColors} />
-            </Box>
+            <Link as={ReachLink} to={`?template=${painting.name}`} key={i}>
+              <Box>
+                <PaintingPreview painting={painting} background={background} outline={outline} colors={defaultColors} />
+              </Box>
+            </Link>
           ))}
         </>
       )}
