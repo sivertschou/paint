@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Stack, Button, HStack, Input, Text, Center, AspectRatio } from '@chakra-ui/react';
 import { SvgImage } from './SVGImage';
 import { Painting as PaintingType } from '../types';
-
+import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 interface Props {
   painting: PaintingType;
 }
@@ -14,6 +14,7 @@ const getDefaultColors = (numColors: number) => [
 ];
 
 export const Painting = ({ painting }: Props) => {
+  const handle = useFullScreenHandle();
   const [slide, setSlide] = React.useState(0);
 
   const [colors, setColors] = React.useState([...getDefaultColors(painting.numColors)]);
@@ -29,9 +30,12 @@ export const Painting = ({ painting }: Props) => {
   const previousSlide = React.useCallback(() => slide > 0 && setSlide(slide - 1), [slide]);
 
   const handleKeyPress = React.useCallback(
-    e => {
-      const { key } = e;
-      console.log(key);
+    ({ key }) => {
+      console.log('handle.active:', handle.active);
+      if (document.activeElement?.tagName === 'INPUT') {
+        return;
+      }
+
       switch (key) {
         case 'ArrowRight':
           nextSlide();
@@ -39,11 +43,17 @@ export const Painting = ({ painting }: Props) => {
         case 'ArrowLeft':
           previousSlide();
           break;
+
+        case 'f':
+          console.log('fullscreen: handle.active:', handle.active);
+          !handle.active && handle.enter();
+          handle.active && handle.exit();
+          break;
         default:
           break;
       }
     },
-    [nextSlide, previousSlide]
+    [nextSlide, previousSlide, handle]
   );
 
   React.useEffect(() => {
@@ -67,9 +77,13 @@ export const Painting = ({ painting }: Props) => {
         <Input value={outline} onChange={e => setOutline(e.target.value)} />
         <Input value={background} onChange={e => setBackground(e.target.value)} />
       </HStack>
-      <AspectRatio background={background} ratio={16 / 9}>
-        <SvgImage svg={image} />
-      </AspectRatio>
+      <FullScreen handle={handle}>
+        <Center height="100%">
+          <AspectRatio ratio={16 / 9} background={background} width="100%">
+            <SvgImage svg={image} />
+          </AspectRatio>
+        </Center>
+      </FullScreen>
       <Center>
         <HStack>
           <Button onClick={() => previousSlide()}>{'<'}</Button>
