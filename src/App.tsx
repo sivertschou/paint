@@ -3,8 +3,6 @@ import { Center, ChakraProvider, Text, Stack } from '@chakra-ui/react';
 import theme from './theme';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Painting } from './Components/Painting';
-import { frogPainting } from './svgs/frog';
-import { hippoPainting } from './svgs/hipt';
 
 export const App = () => {
   return (
@@ -15,10 +13,11 @@ export const App = () => {
             <Stack>
               <Switch>
                 <Route exact path="/">
-                  <Painting painting={hippoPainting} />
+                  {/* <Painting painting={hippoPainting} /> */}
+                  <Text>Halla</Text>
                 </Route>
-                <Route exact path="/f">
-                  <Painting painting={frogPainting} />
+                <Route path="/painting/:name">
+                  <Painting />
                 </Route>
                 <Route>
                   <Text>Siden ble ikke funnet:(</Text>

@@ -3,19 +3,22 @@ import { Stack, Button, HStack, Input, Text, Center, AspectRatio } from '@chakra
 import { SvgImage } from './SVGImage';
 import { Painting as PaintingType } from '../types';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
-interface Props {
-  painting: PaintingType;
-}
-
+import { useParams } from 'react-router';
+import { paintings } from '../svgs/paintings';
 const defaultColors = ['lime', 'yellow', 'blue', 'red'];
 
 const getDefaultColors = (numColors: number) => [
   ...new Array(numColors).fill('').map((_, i) => defaultColors[i % defaultColors.length]),
 ];
 
-export const Painting = ({ painting }: Props) => {
+export const Painting = () => {
   const handle = useFullScreenHandle();
   const [slide, setSlide] = React.useState(0);
+
+  const { name } = useParams<{ name: string }>();
+
+  const paintingByName = paintings.find(painting => painting.name === name);
+  const painting = paintingByName || { iterations: [], name: 'none', numColors: 0, renderContent: () => null };
 
   const [colors, setColors] = React.useState([...getDefaultColors(painting.numColors)]);
   const [outline, setOutline] = React.useState('black');
@@ -62,6 +65,10 @@ export const Painting = ({ painting }: Props) => {
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, [handleKeyPress]);
+
+  if (!paintingByName) {
+    return <Text>Ikke funnet</Text>;
+  }
 
   return (
     <Stack>
