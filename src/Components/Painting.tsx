@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Stack, Button, HStack, Input, Text, Center, AspectRatio } from '@chakra-ui/react';
 import { SvgImage } from './SVGImage';
-import { Painting as PaintingType } from '../types';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
-import { useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { paintings } from '../svgs/paintings';
 const defaultColors = ['lime', 'yellow', 'blue', 'red'];
 
@@ -11,30 +10,44 @@ const getDefaultColors = (numColors: number) => [
   ...new Array(numColors).fill('').map((_, i) => defaultColors[i % defaultColors.length]),
 ];
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 export const Painting = () => {
   const handle = useFullScreenHandle();
   const [slide, setSlide] = React.useState(0);
 
   const { name } = useParams<{ name: string }>();
+  const query = useQuery();
+  const history = useHistory();
 
   const paintingByName = paintings.find(painting => painting.name === name);
   const painting = paintingByName || { iterations: [], name: 'none', numColors: 0, renderContent: () => null };
 
   const [colors, setColors] = React.useState([...getDefaultColors(painting.numColors)]);
+  const [previewColors, setPreviewColors] = React.useState([...getDefaultColors(painting.numColors)]);
   const [outline, setOutline] = React.useState('black');
   const [background, setBackground] = React.useState('white');
+  const [presentationMode, setPresentationMode] = React.useState(false);
 
-  const image = painting.renderContent(colors, outline, painting.iterations, slide);
-
-  const nextSlide = React.useCallback(
-    () => slide < painting.iterations.length && setSlide(slide + 1),
-    [slide, painting.iterations.length]
+  const image = painting.renderContent(
+    previewColors,
+    outline,
+    painting.iterations,
+    !presentationMode ? painting.iterations.length : slide
   );
-  const previousSlide = React.useCallback(() => slide > 0 && setSlide(slide - 1), [slide]);
+
+  const nextSlide = React.useCallback(() => {
+    slide < painting.iterations.length && setSlide(slide + 1);
+  }, [slide, painting.iterations.length]);
+
+  const previousSlide = React.useCallback(() => {
+    slide > 0 && setSlide(slide - 1);
+  }, [slide]);
 
   const handleKeyPress = React.useCallback(
     ({ key }) => {
-      console.log('handle.active:', handle.active);
       if (document.activeElement?.tagName === 'INPUT') {
         return;
       }
@@ -48,7 +61,6 @@ export const Painting = () => {
           break;
 
         case 'f':
-          console.log('fullscreen: handle.active:', handle.active);
           !handle.active && handle.enter();
           handle.active && handle.exit();
           break;
@@ -59,6 +71,13 @@ export const Painting = () => {
     [nextSlide, previousSlide, handle]
   );
 
+  const updateColors = (newColors: string[]) => {
+    if (!newColors.every((c, i) => c === colors[i])) {
+      // update colors and url
+      history.push(`/painting/${painting.name}?colors=${newColors.join(',')}${presentationMode ? '&present' : ''}`);
+    }
+  };
+
   React.useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => {
@@ -66,17 +85,38 @@ export const Painting = () => {
     };
   }, [handleKeyPress]);
 
-  if (!paintingByName) {
+  React.useEffect(() => {
+    const queryColors = query.get('colors')?.split(',');
+    if (queryColors) {
+      const isDifferent = queryColors.every((_, i) => queryColors[i] === colors[i]);
+      if (!isDifferent) {
+        setColors(queryColors);
+        setPreviewColors(queryColors);
+      }
+    }
+
+    const present = query.get('present');
+    if (!presentationMode && present !== null) {
+      setPresentationMode(true);
+    }
+  }, [colors, query, presentationMode]);
+
+  if (!paintingByName || !image) {
     return <Text>Ikke funnet</Text>;
   }
 
   return (
     <Stack>
       <HStack>
-        {colors.map((color, i) => (
+        {previewColors.map((color, i) => (
           <Input
             value={color}
-            onChange={e => setColors(prev => [...prev].map((color, idx) => (idx === i ? e.target.value : color)))}
+            onChange={e =>
+              setPreviewColors(prev => [...prev].map((color, idx) => (idx === i ? e.target.value : color)))
+            }
+            onBlur={e => {
+              updateColors(previewColors);
+            }}
             key={i}
           />
         ))}
@@ -92,11 +132,24 @@ export const Painting = () => {
         </Center>
       </FullScreen>
       <Center>
-        <HStack>
-          <Button onClick={() => previousSlide()}>{'<'}</Button>
-          <Text>{slide}</Text>
-          <Button onClick={() => nextSlide()}>{'>'}</Button>
-        </HStack>
+        {presentationMode ? (
+          <HStack>
+            <Button onClick={() => previousSlide()}>{'<'}</Button>
+            <Text>{slide}</Text>
+            <Button onClick={() => nextSlide()}>{'>'}</Button>
+          </HStack>
+        ) : (
+          <HStack>
+            <Button
+              onClick={() => {
+                const { pathname, search } = history.location;
+                history.push(`${pathname}${search}&present`);
+              }}
+            >
+              Present
+            </Button>
+          </HStack>
+        )}
       </Center>
     </Stack>
   );
