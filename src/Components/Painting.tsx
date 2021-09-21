@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, Button, HStack, Input, Text, Box, Center } from '@chakra-ui/react';
+import { Stack, Button, HStack, Input, Text, Center, AspectRatio } from '@chakra-ui/react';
 import { SvgImage } from './SVGImage';
 import { Painting as PaintingType } from '../types';
 
@@ -22,8 +22,36 @@ export const Painting = ({ painting }: Props) => {
 
   const image = painting.renderContent(colors, outline, painting.iterations, slide);
 
-  const nextSlide = () => slide < painting.iterations.length && setSlide(slide + 1);
-  const previousSlide = () => slide > 0 && setSlide(slide - 1);
+  const nextSlide = React.useCallback(
+    () => slide < painting.iterations.length && setSlide(slide + 1),
+    [slide, painting.iterations.length]
+  );
+  const previousSlide = React.useCallback(() => slide > 0 && setSlide(slide - 1), [slide]);
+
+  const handleKeyPress = React.useCallback(
+    e => {
+      const { key } = e;
+      console.log(key);
+      switch (key) {
+        case 'ArrowRight':
+          nextSlide();
+          break;
+        case 'ArrowLeft':
+          previousSlide();
+          break;
+        default:
+          break;
+      }
+    },
+    [nextSlide, previousSlide]
+  );
+
+  React.useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   return (
     <Stack>
@@ -39,14 +67,14 @@ export const Painting = ({ painting }: Props) => {
         <Input value={outline} onChange={e => setOutline(e.target.value)} />
         <Input value={background} onChange={e => setBackground(e.target.value)} />
       </HStack>
-      <Box background={background}>
+      <AspectRatio background={background} ratio={16 / 9}>
         <SvgImage svg={image} />
-      </Box>
+      </AspectRatio>
       <Center>
         <HStack>
-          <Button onClick={previousSlide}>{'<'}</Button>
+          <Button onClick={() => previousSlide()}>{'<'}</Button>
           <Text>{slide}</Text>
-          <Button onClick={nextSlide}>{'>'}</Button>
+          <Button onClick={() => nextSlide()}>{'>'}</Button>
         </HStack>
       </Center>
     </Stack>
