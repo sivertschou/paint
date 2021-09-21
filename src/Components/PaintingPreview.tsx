@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SvgImage } from './SVGImage';
 import { Painting } from '../types';
-import { AspectRatio, Text } from '@chakra-ui/layout';
+import { AspectRatio } from '@chakra-ui/layout';
 
 interface Props {
   painting: Painting;

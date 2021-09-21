@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { SvgImage } from './SVGImage';
 import { Painting } from '../types';
 import { paintings } from '../svgs/paintings';
 import { Box, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { colors, defaultColors } from '../colors';
-import { Button } from '@chakra-ui/button';
 import { Link as ReachLink } from 'react-router-dom';
 const generateColorCombinations = (numColors: number) => {
   return [
@@ -28,11 +26,7 @@ export const PaintingOverview = () => {
   const background = 'white';
   const outline = 'black';
 
-  const colorcomb = generateColorCombinations(5);
   const colorsForPaintings = generateColors(99, selectedPainting?.numColors || 5);
-  console.log('colorcomb:', colorcomb);
-
-  console.log('paintings:', paintings);
   return (
     <Stack>
       {selectedPainting ? (
@@ -40,8 +34,8 @@ export const PaintingOverview = () => {
           <Heading>Choose a template</Heading>
 
           <Grid templateColumns="1fr 1fr 1fr" gap="2">
-            {colorsForPaintings.map(colors => (
-              <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`}>
+            {colorsForPaintings.map((colors, i) => (
+              <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
                 <PaintingPreview
                   painting={selectedPainting}
                   background={background}
@@ -53,14 +47,14 @@ export const PaintingOverview = () => {
           </Grid>
         </>
       ) : (
-        paintings.map((painting, i) => (
-          <>
-            <Heading>Choose a template</Heading>
+        <>
+          <Heading>Choose a template</Heading>
+          {paintings.map((painting, i) => (
             <Box key={i} onClick={() => setSelectedPainting(painting)}>
               <PaintingPreview painting={painting} background={background} outline={outline} colors={defaultColors} />
             </Box>
-          </>
-        ))
+          ))}
+        </>
       )}
     </Stack>
   );
