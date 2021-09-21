@@ -4,7 +4,7 @@ import { SvgImage } from './SVGImage';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { useHistory, useLocation, useParams } from 'react-router';
 import { paintings } from '../svgs/paintings';
-const defaultColors = ['lime', 'yellow', 'blue', 'red'];
+import { defaultColors } from '../colors';
 
 const getDefaultColors = (numColors: number) => [
   ...new Array(numColors).fill('').map((_, i) => defaultColors[i % defaultColors.length]),

@@ -3,18 +3,18 @@ import { Center, ChakraProvider, Text, Stack } from '@chakra-ui/react';
 import theme from './theme';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Painting } from './Components/Painting';
+import { PaintingOverview } from './Components/PaintingOverview';
 
 export const App = () => {
   return (
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Center>
-          <Center width={{ base: '100%', md: '75%', lg: '60%' }} h="100vh">
-            <Stack>
+          <Center width={{ base: '100%', md: '75%', lg: '60%' }}>
+            <Stack width="100%">
               <Switch>
                 <Route exact path="/">
-                  {/* <Painting painting={hippoPainting} /> */}
-                  <Text>Halla</Text>
+                  <PaintingOverview />
                 </Route>
                 <Route path="/painting/:name">
                   <Painting />
