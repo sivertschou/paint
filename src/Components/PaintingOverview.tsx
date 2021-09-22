@@ -35,7 +35,7 @@ const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
-const shiftArray = (dir: 'left' | 'right', arr: any[]) => {
+export const shiftArray = (dir: 'left' | 'right', arr: any[]) => {
   switch (dir) {
     case 'left':
       return [...arr.filter((_, i) => i !== 0), arr[0]];

@@ -5,6 +5,7 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { useHistory, useLocation, useParams } from 'react-router';
 import { paintings } from '../svgs/paintings';
 import { defaultColors } from '../colors';
+import { shiftArray } from './PaintingOverview';
 
 const getDefaultColors = (numColors: number) => [
   ...new Array(numColors).fill('').map((_, i) => defaultColors[i % defaultColors.length]),
@@ -51,24 +52,37 @@ export const Painting = () => {
       if (document.activeElement?.tagName === 'INPUT') {
         return;
       }
+      if (presentationMode) {
+        switch (key) {
+          case 'ArrowRight':
+            nextSlide();
+            break;
+          case 'ArrowLeft':
+            previousSlide();
+            break;
 
-      switch (key) {
-        case 'ArrowRight':
-          nextSlide();
-          break;
-        case 'ArrowLeft':
-          previousSlide();
-          break;
+          case 'f':
+            !handle.active && handle.enter();
+            handle.active && handle.exit();
+            break;
+          default:
+            break;
+        }
+      } else {
+        switch (key) {
+          case 'ArrowRight':
+            updateColors(shiftArray('right', previewColors));
+            break;
+          case 'ArrowLeft':
+            updateColors(shiftArray('left', previewColors));
 
-        case 'f':
-          !handle.active && handle.enter();
-          handle.active && handle.exit();
-          break;
-        default:
-          break;
+            break;
+          default:
+            break;
+        }
       }
     },
-    [nextSlide, previousSlide, handle]
+    [nextSlide, previousSlide, handle, previewColors, presentationMode]
   );
 
   const updateColors = (newColors: string[]) => {
@@ -98,6 +112,8 @@ export const Painting = () => {
     const present = query.get('present');
     if (!presentationMode && present !== null) {
       setPresentationMode(true);
+    } else if (presentationMode && present !== '') {
+      setPresentationMode(false);
     }
   }, [colors, query, presentationMode]);
 
