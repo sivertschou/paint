@@ -1,5 +1,7 @@
 export const defaultColors = ['lime', 'yellow', 'blue', 'red'];
 
+export const basicColors = ['red', 'purple', 'fuchsia', 'green', 'lime', 'yellow', 'blue', 'aqua'];
+
 export const colors = [
   'aliceblue',
   'antiquewhite',
