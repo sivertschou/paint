@@ -47,6 +47,13 @@ export const Painting = () => {
     slide > 0 && setSlide(slide - 1);
   }, [slide]);
 
+  const updateColors = (newColors: string[]) => {
+    if (!newColors.every((c, i) => c === colors[i])) {
+      // update colors and url
+      history.push(`/painting/${painting.name}?colors=${newColors.join(',')}${presentationMode ? '&present' : ''}`);
+    }
+  };
+
   const handleKeyPress = React.useCallback(
     ({ key }) => {
       if (document.activeElement?.tagName === 'INPUT') {
@@ -84,13 +91,6 @@ export const Painting = () => {
     },
     [nextSlide, previousSlide, handle, previewColors, presentationMode]
   );
-
-  const updateColors = (newColors: string[]) => {
-    if (!newColors.every((c, i) => c === colors[i])) {
-      // update colors and url
-      history.push(`/painting/${painting.name}?colors=${newColors.join(',')}${presentationMode ? '&present' : ''}`);
-    }
-  };
 
   React.useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);

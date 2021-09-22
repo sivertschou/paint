@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Painting } from '../types';
 import { paintings } from '../svgs/paintings';
-import { Box, Divider, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
+import { Box, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { basicColors, colors, defaultColors } from '../colors';
 import { Link as ReachLink } from 'react-router-dom';
@@ -92,11 +92,12 @@ export const PaintingOverview = () => {
         case 'r':
           setBasicColorsForPaintings(generateColors(33, selectedPainting.numColors || 4, basicColors));
           setColorsForPaintings(generateColors(99, selectedPainting.numColors || 4, colors));
+          break;
         default:
           break;
       }
     },
-    [setBasicColorsForPaintings, setColorsForPaintings, colorsForPaintings, basicColorsForPaintings]
+    [setBasicColorsForPaintings, setColorsForPaintings, colorsForPaintings, basicColorsForPaintings, selectedPainting]
   );
 
   React.useEffect(() => {
