@@ -123,6 +123,7 @@ export const Painting = () => {
 
   return (
     <Stack>
+      <Button onClick={() => history.push('/')}>Go back</Button>
       <HStack>
         {previewColors.map((color, i) => (
           <Input
