@@ -1,18 +1,26 @@
 import * as React from 'react';
 import { Painting } from '../types';
 import { paintings } from '../svgs/paintings';
-import { Box, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
+import { Box, Divider, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { basicColors, colors, defaultColors } from '../colors';
 import { Link as ReachLink } from 'react-router-dom';
 import { useHistory, useLocation } from 'react-router';
 
 const generateColorCombinations = (numColors: number, colors: string[]) => {
-  return [
-    ...Array(numColors)
-      .fill('')
-      .map(_ => colors[Math.floor(Math.random() * colors.length)]),
-  ];
+  let arr = [] as number[];
+  for (let i = 0; i < numColors; i++) {
+    let index = Math.floor(Math.random() * colors.length);
+    for (let j = 0; j < 50; j++) {
+      if (arr.every(el => el !== index)) {
+        break;
+      }
+      index = (index + 1) % colors.length;
+    }
+    arr = [...arr, index];
+  }
+
+  return [...arr.map(i => colors[i])];
 };
 
 const generateColors = (numPaintings: number, colorsPerPainting: number, colors: string[]) => {
@@ -70,18 +78,25 @@ export const PaintingOverview = () => {
         return;
       }
 
+      if (!selectedPainting) return;
+
       switch (key) {
         case 'ArrowRight':
           setBasicColorsForPaintings(basicColorsForPaintings.map(c => shiftArray('right', c)));
+          setColorsForPaintings(colorsForPaintings.map(c => shiftArray('right', c)));
           break;
         case 'ArrowLeft':
           setBasicColorsForPaintings(basicColorsForPaintings.map(c => shiftArray('left', c)));
+          setColorsForPaintings(colorsForPaintings.map(c => shiftArray('left', c)));
           break;
+        case 'r':
+          setBasicColorsForPaintings(generateColors(33, selectedPainting.numColors || 4, basicColors));
+          setColorsForPaintings(generateColors(99, selectedPainting.numColors || 4, colors));
         default:
           break;
       }
     },
-    [setBasicColorsForPaintings, basicColorsForPaintings]
+    [setBasicColorsForPaintings, setColorsForPaintings, colorsForPaintings, basicColorsForPaintings]
   );
 
   React.useEffect(() => {
@@ -104,6 +119,9 @@ export const PaintingOverview = () => {
         <>
           <Heading>Choose a template</Heading>
 
+          <Heading as={'h2'} fontSize="2xl">
+            Basic colors
+          </Heading>
           <Grid templateColumns="1fr 1fr 1fr" gap="2">
             {basicColorsForPaintings.map((colors, i) => (
               <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
@@ -116,7 +134,9 @@ export const PaintingOverview = () => {
               </Link>
             ))}
           </Grid>
-
+          <Heading as={'h2'} fontSize="2xl">
+            All colors
+          </Heading>
           <Grid templateColumns="1fr 1fr 1fr" gap="2">
             {colorsForPaintings.map((colors, i) => (
               <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
