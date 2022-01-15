@@ -7,9 +7,6 @@ import {
   Text,
   Center,
   AspectRatio,
-  UnorderedList,
-  ListItem,
-  Code,
   Kbd,
   Table,
   Thead,
@@ -87,14 +84,17 @@ export const Painting = () => {
         history.replace({ search: queryParams.toString() });
       }
     },
-    [colors, history, painting.name, presentationMode]
+    [colors, history]
   );
 
-  const setPresentationMode = (present: boolean) => {
-    const queryParams = new URLSearchParams(history.location.search);
-    queryParams.set('present', present.toString());
-    history.replace({ search: queryParams.toString() });
-  };
+  const setPresentationMode = React.useCallback(
+    (present: boolean) => {
+      const queryParams = new URLSearchParams(history.location.search);
+      queryParams.set('present', present.toString());
+      history.replace({ search: queryParams.toString() });
+    },
+    [history]
+  );
 
   const handleKeyPress = React.useCallback(
     ({ key }) => {
@@ -138,7 +138,7 @@ export const Painting = () => {
         }
       }
     },
-    [nextSlide, previousSlide, handle, updateColors, previewColors, presentationMode]
+    [nextSlide, previousSlide, handle, updateColors, previewColors, presentationMode, setPresentationMode]
   );
 
   React.useEffect(() => {
@@ -165,7 +165,7 @@ export const Painting = () => {
     } else if (presentationMode && !present) {
       setPresentationModeState(false);
     }
-  }, [colors, query, presentationMode]);
+  }, [colors, query, presentationMode, history.location.search]);
 
   if (!paintingByName || !image) {
     return <Text>Ikke funnet</Text>;
