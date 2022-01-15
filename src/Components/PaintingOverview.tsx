@@ -193,12 +193,14 @@ export const PaintingOverview = () => {
         </Stack>
       </Center>
 
-      <Center position="fixed" bottom="0" width="100%">
-        <HStack mb="2">
-          <Button onClick={() => shiftColors('left')}>{'< Shift colors left'}</Button>
-          <Button onClick={() => shiftColors('right')}>{'Shift colors right >'}</Button>
-        </HStack>
-      </Center>
+      {selectedPainting ? (
+        <Center position="fixed" bottom="0" width="100%">
+          <HStack mb="2">
+            <Button onClick={() => shiftColors('left')}>{'< Shift colors left'}</Button>
+            <Button onClick={() => shiftColors('right')}>{'Shift colors right >'}</Button>
+          </HStack>
+        </Center>
+      ) : null}
     </>
   );
 };
