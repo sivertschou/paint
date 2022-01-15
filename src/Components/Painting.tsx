@@ -61,6 +61,7 @@ export const Painting = () => {
 
   const processedColors = previewColors.map(color => (predefinedColors.includes(color) ? color : '#' + color));
 
+  const textShadow = `0px 0px 0.6vh black`;
   const image = painting.renderContent(
     processedColors,
     outline,
@@ -204,10 +205,29 @@ export const Painting = () => {
           </>
         ) : null}
         <FullScreen handle={handle}>
-          <Center height="100%">
+          <Center height="100%" backgroundColor="black">
             <AspectRatio ratio={16 / 9} background={background} width="100%">
               <SvgImage svg={image} />
             </AspectRatio>
+            {handle.active ? (
+              <HStack position="fixed" bottom="2">
+                <Button colorScheme="ghost" onClick={() => previousSlide()}>
+                  <Text color="white" textShadow={textShadow}>
+                    ←
+                  </Text>
+                </Button>
+                <Button colorScheme="ghost" onClick={() => handle.active && handle.exit()}>
+                  <Text color="white" textShadow={textShadow}>
+                    Exit
+                  </Text>
+                </Button>
+                <Button colorScheme="ghost" onClick={() => nextSlide()}>
+                  <Text color="white" textShadow={textShadow}>
+                    →
+                  </Text>
+                </Button>
+              </HStack>
+            ) : null}
           </Center>
         </FullScreen>
         <Center width="100%" paddingBottom="10">
