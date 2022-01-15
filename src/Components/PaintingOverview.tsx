@@ -140,7 +140,7 @@ export const PaintingOverview = () => {
         <Stack width={{ base: '100%', md: '75%', lg: '60%' }} mb="5em">
           {selectedPainting ? (
             <>
-              <Heading>Choose a template</Heading>
+              <Heading>Choose a motive</Heading>
 
               <Heading as={'h2'} fontSize="2xl">
                 Basic colors
@@ -175,7 +175,7 @@ export const PaintingOverview = () => {
             </>
           ) : (
             <>
-              <Heading>Choose a template</Heading>
+              <Heading>Choose a motive</Heading>
               {paintings.map((painting, i) => (
                 <Link as={ReachLink} to={`?template=${painting.name}`} key={i}>
                   <Box>
@@ -196,8 +196,16 @@ export const PaintingOverview = () => {
       {selectedPainting ? (
         <Center position="fixed" bottom="0" width="100%">
           <HStack mb="2">
-            <Button onClick={() => shiftColors('left')}>{'< Shift colors left'}</Button>
-            <Button onClick={() => shiftColors('right')}>{'Shift colors right >'}</Button>
+            <Button onClick={() => shiftColors('left')} colorScheme="pink">
+              {'← Shift colors left'}
+            </Button>
+
+            <Button onClick={() => regenerateColors()} colorScheme="pink">
+              {'Regenerate colors'}
+            </Button>
+            <Button onClick={() => shiftColors('right')} colorScheme="pink">
+              {'Shift colors right →'}
+            </Button>
           </HStack>
         </Center>
       ) : null}

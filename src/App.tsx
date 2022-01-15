@@ -10,7 +10,7 @@ export const App = () => {
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Center>
-          <Stack width="100%">
+          <Stack width="100%" paddingY="5">
             <Switch>
               <Route exact path="/">
                 <PaintingOverview />
