@@ -7,17 +7,25 @@ import { basicColors, colors, defaultColors } from '../colors';
 import { Link as ReachLink } from 'react-router-dom';
 import { useHistory, useLocation } from 'react-router';
 
+const generateIntNotInArray = (currentValues: number[], min: number, max: number) => {
+  const diff = max - min;
+  if (diff === 0) return min;
+
+  if (diff === currentValues.length) return Math.floor(Math.random() * diff) + min;
+
+  for (let i = 0; i < 100; i++) {
+    const value = Math.floor(Math.random() * diff) + min;
+    if (!currentValues.includes(value)) {
+      return value;
+    }
+  }
+
+  return Math.floor(Math.random() * diff) + min;
+};
 const generateColorCombinations = (numColors: number, colors: string[]) => {
   let arr = [] as number[];
   for (let i = 0; i < numColors; i++) {
-    let index = Math.floor(Math.random() * colors.length);
-    for (let j = 0; j < 50; j++) {
-      if (arr.every(el => el !== index)) {
-        break;
-      }
-      index = (index + 1) % colors.length;
-    }
-    arr = [...arr, index];
+    arr = [...arr, generateIntNotInArray(arr, 0, colors.length)];
   }
 
   return [...arr.map(i => colors[i])];
@@ -72,6 +80,21 @@ export const PaintingOverview = () => {
     }
   }, [history, query, selectedPainting]);
 
+  const shiftColors = React.useCallback(
+    (direction: 'left' | 'right') => {
+      setBasicColorsForPaintings(basicColorsForPaintings.map(c => shiftArray(direction, c)));
+      setColorsForPaintings(colorsForPaintings.map(c => shiftArray(direction, c)));
+    },
+    [setBasicColorsForPaintings, basicColorsForPaintings, setColorsForPaintings, colorsForPaintings]
+  );
+
+  const regenerateColors = React.useCallback(() => {
+    if (!selectedPainting) return;
+
+    setBasicColorsForPaintings(generateColors(33, selectedPainting.numColors || 4, basicColors));
+    setColorsForPaintings(generateColors(99, selectedPainting.numColors || 4, colors));
+  }, [setBasicColorsForPaintings, setColorsForPaintings, selectedPainting]);
+
   const handleKeyPress = React.useCallback(
     ({ key }) => {
       if (document.activeElement?.tagName === 'INPUT') {
@@ -82,22 +105,19 @@ export const PaintingOverview = () => {
 
       switch (key) {
         case 'ArrowRight':
-          setBasicColorsForPaintings(basicColorsForPaintings.map(c => shiftArray('right', c)));
-          setColorsForPaintings(colorsForPaintings.map(c => shiftArray('right', c)));
+          shiftColors('right');
           break;
         case 'ArrowLeft':
-          setBasicColorsForPaintings(basicColorsForPaintings.map(c => shiftArray('left', c)));
-          setColorsForPaintings(colorsForPaintings.map(c => shiftArray('left', c)));
+          shiftColors('left');
           break;
         case 'r':
-          setBasicColorsForPaintings(generateColors(33, selectedPainting.numColors || 4, basicColors));
-          setColorsForPaintings(generateColors(99, selectedPainting.numColors || 4, colors));
+          regenerateColors();
           break;
         default:
           break;
       }
     },
-    [setBasicColorsForPaintings, setColorsForPaintings, colorsForPaintings, basicColorsForPaintings, selectedPainting]
+    [selectedPainting, regenerateColors, shiftColors]
   );
 
   React.useEffect(() => {
@@ -109,10 +129,9 @@ export const PaintingOverview = () => {
 
   React.useEffect(() => {
     if (selectedPainting) {
-      setBasicColorsForPaintings(generateColors(33, selectedPainting.numColors || 4, basicColors));
-      setColorsForPaintings(generateColors(99, selectedPainting.numColors || 4, colors));
+      regenerateColors();
     }
-  }, [selectedPainting]);
+  }, [selectedPainting, regenerateColors]);
 
   return (
     <Stack>

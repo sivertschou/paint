@@ -47,12 +47,15 @@ export const Painting = () => {
     slide > 0 && setSlide(slide - 1);
   }, [slide]);
 
-  const updateColors = (newColors: string[]) => {
-    if (!newColors.every((c, i) => c === colors[i])) {
-      // update colors and url
-      history.push(`/painting/${painting.name}?colors=${newColors.join(',')}${presentationMode ? '&present' : ''}`);
-    }
-  };
+  const updateColors = React.useCallback(
+    (newColors: string[]) => {
+      if (!newColors.every((c, i) => c === colors[i])) {
+        // update colors and url
+        history.push(`/painting/${painting.name}?colors=${newColors.join(',')}${presentationMode ? '&present' : ''}`);
+      }
+    },
+    [colors, history, painting.name, presentationMode]
+  );
 
   const handleKeyPress = React.useCallback(
     ({ key }) => {
@@ -89,7 +92,7 @@ export const Painting = () => {
         }
       }
     },
-    [nextSlide, previousSlide, handle, previewColors, presentationMode]
+    [nextSlide, previousSlide, handle, updateColors, previewColors, presentationMode]
   );
 
   React.useEffect(() => {
