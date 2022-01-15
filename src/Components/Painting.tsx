@@ -125,52 +125,69 @@ export const Painting = () => {
   }
 
   return (
-    <Stack>
-      <Button onClick={() => history.push('/')}>Go back</Button>
-      <HStack>
-        {previewColors.map((color, i) => (
-          <Input
-            value={color}
-            onChange={e =>
-              setPreviewColors(prev => [...prev].map((color, idx) => (idx === i ? e.target.value : color)))
-            }
-            onBlur={e => {
-              updateColors(previewColors);
-            }}
-            key={i}
-          />
-        ))}
-
-        <Input value={outline} onChange={e => setOutline(e.target.value)} />
-        <Input value={background} onChange={e => setBackground(e.target.value)} />
-      </HStack>
-      <FullScreen handle={handle}>
-        <Center height="100%">
-          <AspectRatio ratio={16 / 9} background={background} width="100%">
-            <SvgImage svg={image} />
-          </AspectRatio>
-        </Center>
-      </FullScreen>
-      <Center>
-        {presentationMode ? (
-          <HStack>
-            <Button onClick={() => previousSlide()}>{'<'}</Button>
-            <Text>{slide}</Text>
-            <Button onClick={() => nextSlide()}>{'>'}</Button>
-          </HStack>
-        ) : (
-          <HStack>
-            <Button
-              onClick={() => {
-                const { pathname, search } = history.location;
-                history.push(`${pathname}${search}&present`);
+    <Center>
+      <Stack width={{ base: '100%', md: '75%', lg: '60%' }}>
+        <Button onClick={() => history.push('/')}>Go back</Button>
+        <HStack>
+          {previewColors.map((color, i) => (
+            <Input
+              value={color}
+              onChange={e =>
+                setPreviewColors(prev => [...prev].map((color, idx) => (idx === i ? e.target.value : color)))
+              }
+              onBlur={e => {
+                updateColors(previewColors);
               }}
-            >
-              Present
-            </Button>
-          </HStack>
-        )}
-      </Center>
-    </Stack>
+              key={i}
+            />
+          ))}
+
+          <Input value={outline} onChange={e => setOutline(e.target.value)} />
+          <Input value={background} onChange={e => setBackground(e.target.value)} />
+        </HStack>
+        <HStack>
+          <Button width="100%" onClick={() => updateColors(shiftArray('left', previewColors))}>
+            {'< Shift colors left'}
+          </Button>
+          <Button width="100%" onClick={() => updateColors(shiftArray('right', previewColors))}>
+            {'Shift colors right >'}
+          </Button>
+        </HStack>
+        <FullScreen handle={handle}>
+          <Center height="100%">
+            <AspectRatio ratio={16 / 9} background={background} width="100%">
+              <SvgImage svg={image} />
+            </AspectRatio>
+          </Center>
+        </FullScreen>
+        <Button
+          onClick={() => {
+            !handle.active && handle.enter();
+          }}
+        >
+          Fullscreen
+        </Button>
+        <Center>
+          {presentationMode ? (
+            <HStack>
+              <Button onClick={() => previousSlide()}>{'<'}</Button>
+              <Text>{slide}</Text>
+              <Button onClick={() => nextSlide()}>{'>'}</Button>
+            </HStack>
+          ) : (
+            <HStack>
+              <Button
+                onClick={() => {
+                  const { pathname, search } = history.location;
+                  history.push(`${pathname}${search}&present`);
+                }}
+              >
+                Present
+              </Button>
+            </HStack>
+          )}
+        </Center>
+      </Stack>
+    </Center>
   );
 };

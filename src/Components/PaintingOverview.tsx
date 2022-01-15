@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Painting } from '../types';
 import { paintings } from '../svgs/paintings';
-import { Box, Grid, Heading, Link, Stack } from '@chakra-ui/layout';
+import { Box, Grid, Text, Heading, Link, Stack, HStack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { basicColors, colors, defaultColors } from '../colors';
 import { Link as ReachLink } from 'react-router-dom';
 import { useHistory, useLocation } from 'react-router';
+import { Center, Button } from '@chakra-ui/react';
 
 const generateIntNotInArray = (currentValues: number[], min: number, max: number) => {
   const diff = max - min;
@@ -134,54 +135,70 @@ export const PaintingOverview = () => {
   }, [selectedPainting, regenerateColors]);
 
   return (
-    <Stack>
-      {selectedPainting ? (
-        <>
-          <Heading>Choose a template</Heading>
+    <>
+      <Center>
+        <Stack width={{ base: '100%', md: '75%', lg: '60%' }} mb="5em">
+          {selectedPainting ? (
+            <>
+              <Heading>Choose a template</Heading>
 
-          <Heading as={'h2'} fontSize="2xl">
-            Basic colors
-          </Heading>
-          <Grid templateColumns="1fr 1fr 1fr" gap="2">
-            {basicColorsForPaintings.map((colors, i) => (
-              <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
-                <PaintingPreview
-                  painting={selectedPainting}
-                  background={background}
-                  outline={outline}
-                  colors={colors}
-                />
-              </Link>
-            ))}
-          </Grid>
-          <Heading as={'h2'} fontSize="2xl">
-            All colors
-          </Heading>
-          <Grid templateColumns="1fr 1fr 1fr" gap="2">
-            {colorsForPaintings.map((colors, i) => (
-              <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
-                <PaintingPreview
-                  painting={selectedPainting}
-                  background={background}
-                  outline={outline}
-                  colors={colors}
-                />
-              </Link>
-            ))}
-          </Grid>
-        </>
-      ) : (
-        <>
-          <Heading>Choose a template</Heading>
-          {paintings.map((painting, i) => (
-            <Link as={ReachLink} to={`?template=${painting.name}`} key={i}>
-              <Box>
-                <PaintingPreview painting={painting} background={background} outline={outline} colors={defaultColors} />
-              </Box>
-            </Link>
-          ))}
-        </>
-      )}
-    </Stack>
+              <Heading as={'h2'} fontSize="2xl">
+                Basic colors
+              </Heading>
+              <Grid templateColumns="1fr 1fr 1fr" gap="2">
+                {basicColorsForPaintings.map((colors, i) => (
+                  <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
+                    <PaintingPreview
+                      painting={selectedPainting}
+                      background={background}
+                      outline={outline}
+                      colors={colors}
+                    />
+                  </Link>
+                ))}
+              </Grid>
+              <Heading as={'h2'} fontSize="2xl">
+                All colors
+              </Heading>
+              <Grid templateColumns="1fr 1fr 1fr" gap="2">
+                {colorsForPaintings.map((colors, i) => (
+                  <Link as={ReachLink} to={`/painting/${selectedPainting.name}?colors=${colors.join(',')}`} key={i}>
+                    <PaintingPreview
+                      painting={selectedPainting}
+                      background={background}
+                      outline={outline}
+                      colors={colors}
+                    />
+                  </Link>
+                ))}
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Heading>Choose a template</Heading>
+              {paintings.map((painting, i) => (
+                <Link as={ReachLink} to={`?template=${painting.name}`} key={i}>
+                  <Box>
+                    <PaintingPreview
+                      painting={painting}
+                      background={background}
+                      outline={outline}
+                      colors={defaultColors}
+                    />
+                  </Box>
+                </Link>
+              ))}
+            </>
+          )}
+        </Stack>
+      </Center>
+
+      <Center position="fixed" bottom="0" width="100%">
+        <HStack mb="2">
+          <Button onClick={() => shiftColors('left')}>{'< Shift colors left'}</Button>
+          <Button onClick={() => shiftColors('right')}>{'Shift colors right >'}</Button>
+        </HStack>
+      </Center>
+    </>
   );
 };

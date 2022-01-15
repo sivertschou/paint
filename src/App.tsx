@@ -10,21 +10,19 @@ export const App = () => {
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Center>
-          <Center width={{ base: '100%', md: '75%', lg: '60%' }}>
-            <Stack width="100%">
-              <Switch>
-                <Route exact path="/">
-                  <PaintingOverview />
-                </Route>
-                <Route path="/painting/:name">
-                  <Painting />
-                </Route>
-                <Route>
-                  <Text>Siden ble ikke funnet:(</Text>
-                </Route>
-              </Switch>
-            </Stack>
-          </Center>
+          <Stack width="100%">
+            <Switch>
+              <Route exact path="/">
+                <PaintingOverview />
+              </Route>
+              <Route path="/painting/:name">
+                <Painting />
+              </Route>
+              <Route>
+                <Text>Siden ble ikke funnet:(</Text>
+              </Route>
+            </Switch>
+          </Stack>
         </Center>
       </BrowserRouter>
     </ChakraProvider>
