@@ -4,7 +4,7 @@ import { SvgImage } from './SVGImage';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { useHistory, useLocation, useParams } from 'react-router';
 import { paintings } from '../svgs/paintings';
-import { defaultColors } from '../colors';
+import { defaultColors, colors as predefinedColors } from '../colors';
 import { shiftArray } from './PaintingOverview';
 
 const getDefaultColors = (numColors: number) => [
@@ -32,8 +32,10 @@ export const Painting = () => {
   const [background, setBackground] = React.useState('white');
   const [presentationMode, setPresentationMode] = React.useState(false);
 
+  const processedColors = previewColors.map(color => (predefinedColors.includes(color) ? color : '#' + color));
+
   const image = painting.renderContent(
-    previewColors,
+    processedColors,
     outline,
     painting.iterations,
     !presentationMode ? painting.iterations.length : slide
@@ -104,6 +106,7 @@ export const Painting = () => {
 
   React.useEffect(() => {
     const queryColors = query.get('colors')?.split(',');
+    console.log('query.get("colors")', query.get('colors'));
     if (queryColors) {
       const isDifferent = queryColors.every((_, i) => queryColors[i] === colors[i]);
       if (!isDifferent) {
@@ -135,7 +138,7 @@ export const Painting = () => {
               onChange={e =>
                 setPreviewColors(prev => [...prev].map((color, idx) => (idx === i ? e.target.value : color)))
               }
-              onBlur={e => {
+              onBlur={_e => {
                 updateColors(previewColors);
               }}
               key={i}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Painting } from '../types';
 import { paintings } from '../svgs/paintings';
-import { Box, Grid, Text, Heading, Link, Stack, HStack } from '@chakra-ui/layout';
+import { Box, Grid, Heading, Link, Stack, HStack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { basicColors, colors, defaultColors } from '../colors';
 import { Link as ReachLink } from 'react-router-dom';
