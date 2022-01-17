@@ -1,4 +1,4 @@
-# Paintings
+# Paint
 
 A small project created for an evening of painting with friends. Choose a motive, colors and paint along IRL to create some art 🎨
 
