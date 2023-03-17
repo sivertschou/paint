@@ -57,11 +57,13 @@ export const Painting = () => {
   const presentationModeExitWarningOnClose = () => setPresentationModeExitWarningIsOpen(false);
 
   const processedColors = previewColors.map(color => (predefinedColors.includes(color) ? color : '#' + color));
+  const outlineColor = predefinedColors.includes(outline) ? outline : '#' + outline;
+  const backgroundColor = predefinedColors.includes(background) ? background : '#' + background;
 
   const textShadow = `0px 0px 0.6vh black`;
   const image = painting.renderContent(
     processedColors,
-    outline,
+    outlineColor,
     painting.iterations,
     !presentationMode ? painting.iterations.length : slide
   );
@@ -206,7 +208,7 @@ export const Painting = () => {
         ) : null}
         <FullScreen handle={handle}>
           <Center height="100%" backgroundColor="black">
-            <AspectRatio ratio={16 / 9} background={background} width="100%">
+            <AspectRatio ratio={16 / 9} background={backgroundColor} width="100%">
               <SvgImage svg={image} />
             </AspectRatio>
             {handle.active ? (
