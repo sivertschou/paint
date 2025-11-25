@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react';
 import { SvgImage } from './SVGImage';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { paintings } from '../svgs/paintings';
 import { defaultColors, colors as predefinedColors } from '../colors';
 import { shiftArray } from './PaintingOverview';
@@ -42,7 +42,8 @@ export const Painting = () => {
 
   const { name } = useParams<{ name: string }>();
   const query = useQuery();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const paintingByName = paintings.find(painting => painting.name === name);
   const painting = paintingByName || { iterations: [], name: 'none', numColors: 0, renderContent: () => null };
@@ -81,25 +82,25 @@ export const Painting = () => {
       if (!newColors.every((c, i) => c === colors[i])) {
         // update colors and url
 
-        const queryParams = new URLSearchParams(history.location.search);
+        const queryParams = new URLSearchParams(location.search);
         queryParams.set('colors', newColors.toString());
-        history.replace({ search: queryParams.toString() });
+        navigate('?' + queryParams.toString(), { replace: true });
       }
     },
-    [colors, history]
+    [colors, location.search, navigate]
   );
 
   const setPresentationMode = React.useCallback(
     (present: boolean) => {
-      const queryParams = new URLSearchParams(history.location.search);
+      const queryParams = new URLSearchParams(location.search);
       queryParams.set('present', present.toString());
-      history.replace({ search: queryParams.toString() });
+      navigate('?' + queryParams.toString(), { replace: true });
     },
-    [history]
+    [location.search, navigate]
   );
 
   const handleKeyPress = React.useCallback(
-    ({ key }) => {
+    ({ key }: { key: string }) => {
       if (document.activeElement?.tagName === 'INPUT') {
         return;
       }
@@ -151,7 +152,7 @@ export const Painting = () => {
   }, [handleKeyPress]);
 
   React.useEffect(() => {
-    const queryParams = new URLSearchParams(history.location.search);
+    const queryParams = new URLSearchParams(location.search);
     const queryColors = queryParams.get('colors')?.split(',');
     if (queryColors) {
       const isDifferent = queryColors.every((_, i) => queryColors[i] === colors[i]);
@@ -167,7 +168,7 @@ export const Painting = () => {
     } else if (presentationMode && !present) {
       setPresentationModeState(false);
     }
-  }, [colors, query, presentationMode, history.location.search]);
+  }, [colors, query, presentationMode, location.search]);
 
   if (!paintingByName || !image) {
     return <Text>Ikke funnet</Text>;
@@ -176,7 +177,7 @@ export const Painting = () => {
   return (
     <Center>
       <Stack width={{ base: '100%', md: '75%', lg: '60%' }}>
-        <Button onClick={() => history.push('/')}>← Back to motive selection</Button>
+        <Button onClick={() => navigate('/')}>← Back to motive selection</Button>
         {!presentationMode ? (
           <>
             <HStack>

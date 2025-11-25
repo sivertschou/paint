@@ -4,8 +4,7 @@ import { paintings } from '../svgs/paintings';
 import { Box, Grid, Heading, Link, Stack, HStack } from '@chakra-ui/layout';
 import { PaintingPreview } from './PaintingPreview';
 import { basicColors, colors, defaultColors } from '../colors';
-import { Link as ReachLink } from 'react-router-dom';
-import { useHistory, useLocation } from 'react-router';
+import { Link as ReachLink, useNavigate, useLocation } from 'react-router-dom';
 import { Center, Button } from '@chakra-ui/react';
 
 const generateIntNotInArray = (currentValues: number[], min: number, max: number) => {
@@ -57,7 +56,8 @@ export const PaintingOverview = () => {
   const [selectedPainting, setSelectedPainting] = React.useState<Painting | null>(null);
 
   const query = useQuery();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const background = 'white';
   const outline = 'black';
@@ -72,14 +72,14 @@ export const PaintingOverview = () => {
       if (matchingPainting) {
         setSelectedPainting(matchingPainting || null);
       } else {
-        history.push('/');
+        navigate('/');
       }
     } else {
-      if (history.location.pathname === '/' && selectedPainting) {
+      if (location.pathname === '/' && selectedPainting) {
         setSelectedPainting(null);
       }
     }
-  }, [history, query, selectedPainting]);
+  }, [navigate, location.pathname, query, selectedPainting]);
 
   const shiftColors = React.useCallback(
     (direction: 'left' | 'right') => {
@@ -97,7 +97,7 @@ export const PaintingOverview = () => {
   }, [setBasicColorsForPaintings, setColorsForPaintings, selectedPainting]);
 
   const handleKeyPress = React.useCallback(
-    ({ key }) => {
+    ({ key }: { key: string }) => {
       if (document.activeElement?.tagName === 'INPUT') {
         return;
       }

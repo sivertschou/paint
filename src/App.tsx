@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Center, ChakraProvider, Text, Stack } from '@chakra-ui/react';
 import theme from './theme';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Painting } from './Components/Painting';
 import { PaintingOverview } from './Components/PaintingOverview';
 
@@ -11,17 +11,11 @@ export const App = () => {
       <BrowserRouter>
         <Center>
           <Stack width="100%" paddingY="5">
-            <Switch>
-              <Route exact path="/">
-                <PaintingOverview />
-              </Route>
-              <Route path="/painting/:name">
-                <Painting />
-              </Route>
-              <Route>
-                <Text>Siden ble ikke funnet:(</Text>
-              </Route>
-            </Switch>
+            <Routes>
+              <Route path="/" element={<PaintingOverview />} />
+              <Route path="/painting/:name" element={<Painting />} />
+              <Route path="*" element={<Text>Siden ble ikke funnet:(</Text>} />
+            </Routes>
           </Stack>
         </Center>
       </BrowserRouter>
